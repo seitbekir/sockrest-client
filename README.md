@@ -1,7 +1,8 @@
 # sockrest-client
+
 Realtime client that works to support protocol defined by [sockrest](https://github.com/seitbekir/sockrest)
 
-# How to use
+## How to use
 
 Client side implementation
 
@@ -15,8 +16,6 @@ client.on('error', (err) => {
 })
 
 client.on('open', () => {
-    client.on('message', res => console.info(res.body.message))
-
     client
         .get('/')
         // 2xx
