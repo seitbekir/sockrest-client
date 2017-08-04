@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SOCKREST implementation demo</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/engine.io-client/3.1.1/engine.io.min.js"></script>
+    <script src="../index.js"></script>
+</head>
+<body>
+    <button id="sendGet">Send GET query</button>
+    <button id="sendPost">Send POST query</button>
+
+    <script>
+        SockrestClient('ws://127.0.0.1:3000')
+            .then($client => {
+                $client
+                    .get('/')
+                    // 2xx
+                    .then(res => {
+                        console.info('Just got response')
+                        console.info('Status Code:', res.statusCode)
+                        console.info('Body:', res.body)
+                    })
+                    // 4xx
+                    .catch(err => {
+                        console.error('Response was not get')
+                        console.error('Status Code:', err.code);
+                    })
+
+                $client
+                    .post('/posts', { robot: 'I`m a client' })
+                    // 2xx
+                    .then(res => {
+                        console.info('Just got response')
+                        console.info('Status Code:', res.statusCode)
+                        console.info('Body:', res.body)
+                    })
+                    // 4xx
+                    .catch(err => {
+                        console.error('Response was not get')
+                        console.error('Status Code:', err.code);
+                    })
+            })
+    </script>
+</body>
+</html>
