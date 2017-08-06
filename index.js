@@ -5,7 +5,7 @@
     }
     function connect(url) {
         return new Promise(function(resolve, reject) {
-            var client = eio('ws://localhost:3000')
+            var client = eio(url)
 
             let result = {
                 query: query,
