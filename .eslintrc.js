@@ -4,7 +4,11 @@ module.exports = {
         "eslint:recommended",
     ],
     "env": {
-        "browser": true
+        "browser": true,
+        "es6": true
+    },
+    "parserOptions": {
+        "sourceType": "module",
     },
     "rules": {
         "indent": [

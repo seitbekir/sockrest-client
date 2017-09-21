@@ -1,0 +1,38 @@
+{
+  "name": "sockrest-client",
+  "version": "1.0.0",
+  "description": "Client of Sockrest service",
+  "main": "src/app.js",
+  "directories": {
+    "example": "example"
+  },
+  "dependencies": {
+    "engine.io-client": "^3.1.1",
+    "eslint": "^4.3.0",
+    "eslint-config-google": "^0.9.1",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "webpack": "^3.6.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seitbekir/sockrest-client.git"
+  },
+  "keywords": [
+    "sockrest",
+    "rest"
+  ],
+  "author": "seitbekir",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/seitbekir/sockrest-client/issues"
+  },
+  "homepage": "https://github.com/seitbekir/sockrest-client#readme"
+}
