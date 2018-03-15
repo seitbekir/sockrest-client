@@ -1,14 +1,16 @@
 import eio from 'engine.io-client'
 import uuid from 'uuid'
+import reconnect from 'engine.io-reconnect'
 
 // engine.io-client required
 if (!eio) {
-    throw new Error('engine.io-client librry required to be included')
+    throw new Error('engine.io-client library required to be included')
 }
 module.exports = connect
 function connect(url) {
     return new Promise(function(resolve, reject) {
-        var client = eio(url)
+        const client = eio(url)
+        reconnect(client)
 
         let result = {
             query: query,

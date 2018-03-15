@@ -706,18 +706,6 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
-
-
-module.exports = function(a, b){
-  var fn = function(){};
-  fn.prototype = b.prototype;
-  a.prototype = new fn;
-  a.prototype.constructor = a;
-};
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {/**
@@ -907,6 +895,18 @@ function localstorage() {
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(28)))
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+
+module.exports = function(a, b){
+  var fn = function(){};
+  fn.prototype = b.prototype;
+  a.prototype = new fn;
+  a.prototype.constructor = a;
+};
 
 /***/ }),
 /* 4 */
@@ -1398,9 +1398,9 @@ function polling (opts) {
 var Transport = __webpack_require__(5);
 var parseqs = __webpack_require__(7);
 var parser = __webpack_require__(1);
-var inherit = __webpack_require__(2);
+var inherit = __webpack_require__(3);
 var yeast = __webpack_require__(10);
-var debug = __webpack_require__(3)('engine.io-client:polling');
+var debug = __webpack_require__(2)('engine.io-client:polling');
 
 /**
  * Module exports.
@@ -1715,31 +1715,32 @@ module.exports = yeast;
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-/* WEBPACK VAR INJECTION */(function(global) {// Unique ID creation requires a high quality random # generator.  In the
+// Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
 // feature-detection
-var rng;
 
-var crypto = global.crypto || global.msCrypto; // for IE 11
-if (crypto && crypto.getRandomValues) {
+// getRandomValues needs to be invoked in a context where "this" is a Crypto implementation.
+var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues.bind(crypto)) ||
+                      (typeof(msCrypto) != 'undefined' && msCrypto.getRandomValues.bind(msCrypto));
+if (getRandomValues) {
   // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
   var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
-  rng = function whatwgRNG() {
-    crypto.getRandomValues(rnds8);
+
+  module.exports = function whatwgRNG() {
+    getRandomValues(rnds8);
     return rnds8;
   };
-}
-
-if (!rng) {
+} else {
   // Math.random()-based (RNG)
   //
   // If all else fails, use Math.random().  It's fast, but is of unspecified
   // quality.
   var rnds = new Array(16);
-  rng = function() {
+
+  module.exports = function mathRNG() {
     for (var i = 0, r; i < 16; i++) {
       if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
       rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
@@ -1749,9 +1750,6 @@ if (!rng) {
   };
 }
 
-module.exports = rng;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
 /* 12 */
@@ -1797,16 +1795,21 @@ var _uuid = __webpack_require__(37);
 
 var _uuid2 = _interopRequireDefault(_uuid);
 
+var _engine3 = __webpack_require__(40);
+
+var _engine4 = _interopRequireDefault(_engine3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // engine.io-client required
 if (!_engine2.default) {
-    throw new Error('engine.io-client librry required to be included');
+    throw new Error('engine.io-client library required to be included');
 }
 module.exports = connect;
 function connect(url) {
     return new Promise(function (resolve, reject) {
         var client = (0, _engine2.default)(url);
+        (0, _engine4.default)(client);
 
         var result = {
             query: query,
@@ -1950,7 +1953,7 @@ module.exports.parser = __webpack_require__(1);
 
 var transports = __webpack_require__(8);
 var Emitter = __webpack_require__(6);
-var debug = __webpack_require__(3)('engine.io-client:socket');
+var debug = __webpack_require__(2)('engine.io-client:socket');
 var index = __webpack_require__(34);
 var parser = __webpack_require__(1);
 var parseuri = __webpack_require__(35);
@@ -2725,8 +2728,8 @@ try {
 var XMLHttpRequest = __webpack_require__(4);
 var Polling = __webpack_require__(9);
 var Emitter = __webpack_require__(6);
-var inherit = __webpack_require__(2);
-var debug = __webpack_require__(3)('engine.io-client:polling-xhr');
+var inherit = __webpack_require__(3);
+var debug = __webpack_require__(2)('engine.io-client:polling-xhr');
 
 /**
  * Module exports.
@@ -3547,9 +3550,9 @@ function noop() {}
 	if (
 		true
 	) {
-		!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
+		!(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
 			return utf8;
-		}.call(exports, __webpack_require__, exports, module),
+		}).call(exports, __webpack_require__, exports, module),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	}	else if (freeExports && !freeExports.nodeType) {
 		if (freeModule) { // in Node.js or RingoJS v0.8.0+
@@ -4339,7 +4342,7 @@ function plural(ms, n, name) {
  */
 
 var Polling = __webpack_require__(9);
-var inherit = __webpack_require__(2);
+var inherit = __webpack_require__(3);
 
 /**
  * Module exports.
@@ -4578,9 +4581,9 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 var Transport = __webpack_require__(5);
 var parser = __webpack_require__(1);
 var parseqs = __webpack_require__(7);
-var inherit = __webpack_require__(2);
+var inherit = __webpack_require__(3);
 var yeast = __webpack_require__(10);
-var debug = __webpack_require__(3)('engine.io-client:websocket');
+var debug = __webpack_require__(2)('engine.io-client:websocket');
 var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 var NodeWebSocket;
 if (typeof window === 'undefined') {
@@ -4990,20 +4993,12 @@ var bytesToUuid = __webpack_require__(12);
 // Inspired by https://github.com/LiosK/UUID.js
 // and http://docs.python.org/library/uuid.html
 
-// random #'s we need to init node and clockseq
-var _seedBytes = rng();
-
-// Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-var _nodeId = [
-  _seedBytes[0] | 0x01,
-  _seedBytes[1], _seedBytes[2], _seedBytes[3], _seedBytes[4], _seedBytes[5]
-];
-
-// Per 4.2.2, randomize (14 bit) clockseq
-var _clockseq = (_seedBytes[6] << 8 | _seedBytes[7]) & 0x3fff;
+var _nodeId;
+var _clockseq;
 
 // Previous uuid creation time
-var _lastMSecs = 0, _lastNSecs = 0;
+var _lastMSecs = 0;
+var _lastNSecs = 0;
 
 // See https://github.com/broofa/node-uuid for API details
 function v1(options, buf, offset) {
@@ -5011,8 +5006,26 @@ function v1(options, buf, offset) {
   var b = buf || [];
 
   options = options || {};
-
+  var node = options.node || _nodeId;
   var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+
+  // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+  if (node == null || clockseq == null) {
+    var seedBytes = rng();
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [
+        seedBytes[0] | 0x01,
+        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
+      ];
+    }
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
+    }
+  }
 
   // UUID timestamps are 100 nano-second units since the Gregorian epoch,
   // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
@@ -5073,7 +5086,6 @@ function v1(options, buf, offset) {
   b[i++] = clockseq & 0xff;
 
   // `node`
-  var node = options.node || _nodeId;
   for (var n = 0; n < 6; ++n) {
     b[i + n] = node[n];
   }
@@ -5095,7 +5107,7 @@ function v4(options, buf, offset) {
   var i = buf && offset || 0;
 
   if (typeof(options) == 'string') {
-    buf = options == 'binary' ? new Array(16) : null;
+    buf = options === 'binary' ? new Array(16) : null;
     options = null;
   }
   options = options || {};
@@ -5117,6 +5129,345 @@ function v4(options, buf, offset) {
 }
 
 module.exports = v4;
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(41);
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Module dependencies.
+ */
+
+var debug = __webpack_require__(2)('engine.io-reconnect');
+
+// Get bind component for node and browser.
+var bind = __webpack_require__(42);
+
+/**
+ * Module exports.
+ */
+
+module.exports = Reconnect;
+
+/**
+ * `Reconnect` constructor.
+ *
+ * @param {Socket} engine instance
+ * @param {Object} options
+ * @api public
+ */
+
+function Reconnect(io, opts) {
+  if (!(this instanceof Reconnect)) return new Reconnect(io, opts);
+
+  opts = opts || {};
+  this.io = io;
+  this.attempt = 0;
+  this.timeoutTimer = null;
+  this.reconnectTimer = null;
+  this.attempts(opts.attempts || Infinity);
+  this.delay(opts.delay || 1000);
+  this.delayMax(opts.delayMax || 5000);
+  this.timeout(null == opts.timeout ? 10000 : opts.timeout);
+  this.reconnection(null == opts.reconnection ? true : opts.reconnection);
+
+  // we need to overwrite socket close method
+  this._close = this.io.close;
+
+  // bind events
+  this.bind();
+  this.connected = false;
+  this.times = 0;
+
+  // lets return the socket object
+  return this.io;
+}
+
+/**
+ * Bind `socket` events.
+ *
+ * @api private
+ */
+
+Reconnect.prototype.bind = function () {
+
+  debug('binding reconnect events and methods');
+
+  // avoid unnecessary binds
+  if (this.io.reconnect) return this;
+
+  // overwriting socket close method
+  this.io.close = bind(this, 'close');
+
+  // adding reconnect methods to socket
+  this.io.reconnect = bind(this, 'reconnect');
+  this.io.reconnection = bind(this, 'reconnection');
+  this.io.reconnectionDelay = bind(this, 'delay');
+  this.io.reconnectionDelayMax = bind(this, 'delayMax');
+  this.io.reconnectionTimeout = bind(this, 'timeout');
+  this.io.reconnectionAttempts = bind(this, 'attempts');
+
+  // caching event functions
+  this.onclose = bind(this, 'onclose');
+
+  // doing the actuall bind
+  this.io.on('close', this.onclose);
+};
+
+/**
+ * Close the current socket.
+ *
+ * @api private
+ */
+
+Reconnect.prototype.close = function () {
+  this.skip = true;
+  // lets return the original close output
+  return this._close.call(this.io);
+};
+
+/**
+ * Called upon engine close.
+ *
+ * @api private
+ */
+
+Reconnect.prototype.onclose = function (reason, desc) {
+  this.connected = false;
+  if (!this.skip && this._reconnection) {
+    this.reconnect();
+  } else {
+    this.clear();
+  }
+};
+
+/**
+ * Called upon connection error.
+ *
+ * @api private
+ */
+
+Reconnect.prototype.onerror = function (error) {
+  if (this.reconnecting) {
+    debug('reconnect attempt error');
+    this.reconnect();
+    this.io.emit('connect_error', error);
+  }
+  return this;
+};
+
+/**
+ * Clean timers.
+ *
+ * @api private
+ */
+
+Reconnect.prototype.clear = function () {
+  clearTimeout(this.reconnectTimer);
+  clearTimeout(this.timeoutTimer);
+  clearTimeout(this.checkTimer);
+  this.reconnectTimer = null;
+  this.timeoutTimer = null;
+  this.checkTimer = null;
+  return this;
+};
+
+/**
+ * Sets the `reconnection` config.
+ *
+ * @param {Boolean} true/false if it should automatically reconnect
+ * @return {Reconnect} self or value
+ * @api public
+ */
+
+Reconnect.prototype.reconnection = function (v) {
+  if (!arguments.length) return this._reconnection;
+  this._reconnection = !!v;
+  return this;
+};
+
+/**
+ * Sets the reconnection attempts config.
+ *
+ * @param {Number} max reconnection attempts before giving up
+ * @return {Reconnect} self or value
+ * @api public
+ */
+
+Reconnect.prototype.attempts = function (v) {
+  if (!arguments.length) return this._attempts;
+  this._attempts = v;
+  return this;
+};
+
+/**
+ * Sets the delay between reconnections.
+ *
+ * @param {Number} delay
+ * @return {Reconnect} self or value
+ * @api public
+ */
+
+Reconnect.prototype.delay = function (v) {
+  if (!arguments.length) return this._delay;
+  this._delay = v;
+  return this;
+};
+
+/**
+ * Sets the maximum delay between reconnections.
+ *
+ * @param {Number} delay
+ * @return {Reconnect} self or value
+ * @api public
+ */
+
+Reconnect.prototype.delayMax = function (v) {
+  if (!arguments.length) return this._delayMax;
+  this._delayMax = v;
+  return this;
+};
+
+/**
+ * Sets the connection timeout. `false` to disable
+ *
+ * @return {Reconnect} self or value
+ * @api public
+ */
+
+Reconnect.prototype.timeout = function (v) {
+  if (!arguments.length) return this._timeout;
+  this._timeout = v;
+  return this;
+};
+
+/**
+ * Attempt to re-open `socket` connection.
+ *
+ * @return {Reconnect} self
+ * @api private
+ */
+
+Reconnect.prototype.open = function(fn) {
+  this.io.open();
+  this.on('open', fn);
+  this.on('error', fn);
+
+  if (false !== this._timeout && !this.timeoutTimer) {
+    debug('connect attempt will timeout after %d', this._timeout);
+    this.timeoutTimer = setTimeout(bind(this, function () {
+      debug('connect attempt timed out after %d', this._timeout);
+      this.close();
+      this.clear();
+      this.io.emit('reconnect_timeout', this._timeout);
+    }), this._timeout);
+  }
+};
+
+/**
+ * Attempt a reconnection.
+ *
+ * @api private
+ */
+
+Reconnect.prototype.reconnect = function (){
+  this.attempt++;
+  this.io.emit('reconnecting', this.attempt);
+  if (this.attempt > this.attempts()) {
+    this.io.emit('reconnect_failed');
+    this.reconnecting = false;
+  } else {
+    var delay = this.attempt * this.delay();
+    if(delay > this._delayMax){
+    	delay = this._delayMax;
+    }
+    
+    debug('will wait %dms before reconnect attempt', delay);
+    
+    if(this.reconnectTimer){
+    	clearTimeout(this.reconnectTimer)
+    }
+    
+    this.reconnectTimer = setTimeout(bind(this, function() {
+      this.reconnectTimer = null;
+      debug('attemptign reconnect');
+      this.open(bind(this, function(err){
+        if (err) {
+          debug('reconnect attempt error');
+          this.reconnect();
+          this.io.emit('reconnect_error', err);
+        } else {
+          debug('reconnect success');
+          this.onreconnect();
+        }
+      }));
+    }), delay);
+  }
+};
+/**
+ * Called upon successful reconnect.
+ *
+ * @api private
+ */
+
+Reconnect.prototype.onreconnect = function () {
+  var attempt = this.attempt;
+  this.clear();
+  this.attempt = 0;
+  this.reconnecting = false;
+  this.connected = true;
+  this.io.emit('reconnect', attempt);
+  return this;
+};
+
+/**
+ * Little helper for binding events.
+ *
+ * @api private
+ */
+
+Reconnect.prototype.on = function (ev, fn) {
+  this.io.off(ev, this['_'+ev]);
+  this.io.on(ev, this['_'+ev] = bind(this, fn));
+  return this;
+};
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports) {
+
+
+/**
+ * Slice reference.
+ */
+
+var slice = [].slice;
+
+/**
+ * Bind `obj` to `fn`.
+ *
+ * @param {Object} obj
+ * @param {Function|String} fn or string
+ * @return {Function}
+ * @api public
+ */
+
+module.exports = function(obj, fn){
+  if ('string' == typeof fn) fn = obj[fn];
+  if ('function' != typeof fn) throw new Error('bind() requires a function');
+  var args = [].slice.call(arguments, 2);
+  return function(){
+    return fn.apply(obj, args.concat(slice.call(arguments)));
+  }
+};
 
 
 /***/ })
