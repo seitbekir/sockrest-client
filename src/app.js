@@ -7,10 +7,13 @@ if (!eio) {
     throw new Error('engine.io-client library required to be included')
 }
 module.exports = connect
-function connect(url) {
+function connect(url, options) {
     return new Promise(function(resolve, reject) {
-        const client = eio(url)
-        reconnect(client)
+        options = options || {}
+        const eioOptions = options.eio || {}
+        const reconnectOptions = options.reconnect || {}
+        const client = eio(url, eioOptions)
+        reconnect(client, reconnectOptions)
 
         let result = {
             query: query,

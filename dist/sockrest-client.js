@@ -1806,10 +1806,13 @@ if (!_engine2.default) {
     throw new Error('engine.io-client library required to be included');
 }
 module.exports = connect;
-function connect(url) {
+function connect(url, options) {
     return new Promise(function (resolve, reject) {
-        var client = (0, _engine2.default)(url);
-        (0, _engine4.default)(client);
+        options = options || {};
+        var eioOptions = options.eio || {};
+        var reconnectOptions = options.reconnect || {};
+        var client = (0, _engine2.default)(url, eioOptions);
+        (0, _engine4.default)(client, reconnectOptions);
 
         var result = {
             query: query,
