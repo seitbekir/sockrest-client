@@ -1,14 +1,20 @@
 import eio from 'engine.io-client'
 import uuid from 'uuid'
+import editURL from 'edit-url'
 
 // engine.io-client required
 if (!eio) {
-    throw new Error('engine.io-client librry required to be included')
+    throw new Error('engine.io-client library required to be included')
 }
 module.exports = connect
-function connect(url) {
+function connect(url, token = false) {
     return new Promise(function(resolve, reject) {
-        var client = eio(url)
+        if (token) {
+            url = editURL(url, obj => obj.query.token = token)
+        }
+        const client = eio(url, {
+            transports: ['websocket'],
+        })
 
         let result = {
             query: query,
