@@ -1,5 +1,6 @@
 import eio from 'engine.io-client'
 import uuid from 'uuid'
+import reconnect from 'engine.io-reconnect'
 import editURL from 'edit-url'
 
 // engine.io-client required
@@ -7,14 +8,17 @@ if (!eio) {
     throw new Error('engine.io-client library required to be included')
 }
 module.exports = connect
-function connect(url, token = false) {
+function connect(url, options) {
     return new Promise(function(resolve, reject) {
-        if (token) {
-            url = editURL(url, obj => obj.query.token = token)
+        options = options || {}
+        options.transports = ['websocket']
+        if (options.token) {
+            url = editURL(url, obj => obj.query.token = options.token)
         }
-        const client = eio(url, {
-            transports: ['websocket'],
-        })
+        const eioOptions = options.eio || {}
+        const reconnectOptions = options.reconnect || {}
+        const client = eio(url, eioOptions)
+        reconnect(client, reconnectOptions)
 
         let result = {
             query: query,

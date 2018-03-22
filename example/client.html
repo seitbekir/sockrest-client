@@ -10,7 +10,7 @@
     <button id="sendNotify">Send Notify</button>
 
     <script>
-        SockrestClient('ws://127.0.0.1:3000', 'user-1')
+        SockrestClient('ws://127.0.0.1:3000', { token: 'user-1' })
             .then($client => {
                 var sendGet = document.getElementById('sendGet')
                 var sendPost = document.getElementById('sendPost')
